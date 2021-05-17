@@ -3,8 +3,11 @@
     <button
       v-if="mode === 'daily'"
       class="h-10 w-10 grid place-items-center ring-pink-500 hover:bg-gray-700 focus:bg-gray-700 focus:ring-2 focus:outline-none rounded-full transition"
-      :class="{ 'pointer-events-none': busy }"
-      :disabled="busy"
+      :class="{
+        'pointer-events-none': busy || prevDayClimax,
+        'text-gray-500': prevDayClimax
+      }"
+      :disabled="busy || prevDayClimax"
       @click="prevDay"
     >
       <div class="h-2/3 w-2/3">
@@ -14,8 +17,11 @@
     <button
       v-if="mode === 'weekly'"
       class="h-10 w-10 grid place-items-center ring-pink-500 hover:bg-gray-700 focus:bg-gray-700 focus:ring-2 focus:outline-none rounded-full transition"
-      :class="{ 'pointer-events-none': busy }"
-      :disabled="busy"
+      :class="{
+        'pointer-events-none': busy || prevWeekClimax,
+        'text-gray-500': prevWeekClimax
+      }"
+      :disabled="busy || prevWeekClimax"
       @click="prevWeek"
     >
       <div class="h-2/3 w-2/3">
@@ -40,8 +46,11 @@
     <button
       v-if="mode === 'daily'"
       class="h-10 w-10 grid place-items-center ring-pink-500 hover:bg-gray-700 focus:bg-gray-700 focus:ring-2 focus:outline-none rounded-full transition"
-      :class="{ 'pointer-events-none': busy }"
-      :disabled="busy"
+      :class="{
+        'pointer-events-none': busy || nextDayClimax,
+        'text-gray-500': nextDayClimax
+      }"
+      :disabled="busy || nextDayClimax"
       @click="nextDay"
     >
       <div class="h-2/3 w-2/3">
@@ -51,8 +60,11 @@
     <button
       v-if="mode === 'weekly'"
       class="h-10 w-10 grid place-items-center ring-pink-500 hover:bg-gray-700 focus:bg-gray-700 focus:ring-2 focus:outline-none rounded-full transition"
-      :class="{ 'pointer-events-none': busy }"
-      :disabled="busy"
+      :class="{
+        'pointer-events-none': busy || nextWeekClimax,
+        'text-gray-500': nextWeekClimax
+      }"
+      :disabled="busy || nextWeekClimax"
       @click="nextWeek"
     >
       <div class="h-2/3 w-2/3">
@@ -74,6 +86,14 @@ export default {
     ChevronLeftIcon,
     ChevronRightIcon
   },
+  data() {
+    return {
+      nextDayClimax: false,
+      nextWeekClimax: false,
+      prevDayClimax: false,
+      prevWeekClimax: false
+    };
+  },
   computed: {
     ...mapGetters({
       busy: 'todos/busy'
@@ -81,19 +101,6 @@ export default {
     mode() {
       const mode = this.$route.query.mode;
       return mode;
-    },
-    registrationDate() {
-      return this.$auth.user.time_stamps.created_at;
-    },
-    registrationWeek() {
-      const registrationWeek = this.$auth.user.time_stamps.created_at;
-      return moment(registrationWeek).format('YYYY-MM-DD');
-    },
-    today() {
-      return moment().format('YYYY-MM-DD');
-    },
-    thisWeek() {
-      return moment().add(6, 'days').format('YYYY-MM-DD');
     },
     dates() {
       const date = this.$route.query?.date;
@@ -116,34 +123,51 @@ export default {
       return time;
     },
     nextDay() {
+      this.prevDayClimax = false;
+      const today = moment().format('YYYY-MM-DD');
       const currentDate = this.dates.date;
       const nextDate = moment(currentDate).add(1, 'days').format('YYYY-MM-DD');
 
-      if (nextDate > this.today) return;
+      if (nextDate > today) {
+        this.nextDayClimax = true;
+        return;
+      }
 
       return this.$router.push(`?mode=daily&date=${nextDate}`);
     },
     nextWeek() {
+      this.prevWeekClimax = false;
+      const thisWeek = moment().add(6, 'days').format('YYYY-MM-DD');
       const currentFrom = this.dates.from;
       const currentTo = this.dates.to;
       const nextFrom = moment(currentFrom).add(6, 'days').format('YYYY-MM-DD');
       const nextTo = moment(currentTo).add(6, 'days').format('YYYY-MM-DD');
 
-      if (nextTo > this.thisWeek) return;
+      if (nextTo > thisWeek) {
+        this.nextWeekClimax = true;
+        return;
+      }
 
       return this.$router.push(`?mode=weekly&from=${nextFrom}&to=${nextTo}`);
     },
     prevDay() {
+      this.nextDayClimax = false;
+      const registrationDate = this.$auth.user.time_stamps.created_at;
       const currentDate = this.dates.date;
       const prevDate = moment(currentDate)
         .subtract(1, 'days')
         .format('YYYY-MM-DD');
 
-      if (prevDate < this.registrationDate) return;
+      if (prevDate < registrationDate) {
+        this.prevDayClimax = true;
+        return;
+      }
 
       return this.$router.push(`?mode=daily&date=${prevDate}`);
     },
     prevWeek() {
+      this.nextWeekClimax = false;
+      const registrationWeek = this.$auth.user.time_stamps.created_at;
       const currentFrom = this.dates.from;
       const currentTo = this.dates.to;
       const prevFrom = moment(currentFrom)
@@ -151,7 +175,10 @@ export default {
         .format('YYYY-MM-DD');
       const prevTo = moment(currentTo).subtract(6, 'days').format('YYYY-MM-DD');
 
-      if (prevFrom < this.registrationWeek) return;
+      if (prevFrom < registrationWeek) {
+        this.prevWeekClimax = true;
+        return;
+      }
 
       return this.$router.push(`?mode=weekly&from=${prevFrom}&to=${prevTo}`);
     }
