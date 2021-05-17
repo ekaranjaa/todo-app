@@ -34,7 +34,7 @@
         <span v-else> Proceed </span>
       </button>
     </form>
-    <div class="mb-4 py-2 px-8">
+    <div v-if="!$auth.loggedIn" class="mb-4 py-2 px-8">
       <nuxt-link
         to="/login"
         class="block text-sm text-center text-pink-500 hover:underline focus:underline transition focus:outline-none"
