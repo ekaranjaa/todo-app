@@ -2,7 +2,7 @@
   <nav class="px-8 h-14 flex items-center border-b border-gray-700">
     <div class="mx-auto flex items-center">
       <nuxt-link
-        :to="`?mode=daily&date=${date.from}`"
+        :to="`?mode=daily&date=${dates.from}`"
         class="px-6 h-14 flex items-center font-semibold hover:text-pink-500 focus:text-pink-500 focus:outline-none transition"
         :class="{
           'border-b-2 border-pink-500 text-pink-500': mode === 'daily'
@@ -11,7 +11,7 @@
         Day
       </nuxt-link>
       <nuxt-link
-        :to="`?mode=weekly&from=${date.from}&to=${date.to}`"
+        :to="`?mode=weekly&from=${dates.from}&to=${dates.to}`"
         class="px-6 h-14 flex items-center font-semibold hover:text-pink-500 focus:text-pink-500 focus:outline-none transition"
         :class="{
           'border-b-2 border-pink-500 text-pink-500': mode === 'weekly'
@@ -53,14 +53,14 @@ export default {
       if (!mode) return 'daily';
       return mode;
     },
-    date() {
+    dates() {
       const from = moment().format('YYYY-MM-DD');
       const to = moment().add(6, 'days').format('YYYY-MM-DD');
       return { from, to };
     }
   },
   created() {
-    this.setDate(this.date.from);
+    this.setDate(this.dates.from);
   },
   methods: {
     setDate(date) {

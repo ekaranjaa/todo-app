@@ -24,16 +24,16 @@
     </button>
     <div class="text-center">
       <div v-if="mode === 'daily'">
-        <p class="mb-2 text-2xl font-semibold">{{ formatTime(date.date) }}</p>
-        <p class="text-gray-400">{{ formatTime(date.date, 'long') }}</p>
+        <p class="mb-2 text-2xl font-semibold">{{ formatTime(dates.date) }}</p>
+        <p class="text-gray-400">{{ formatTime(dates.date, 'text') }}</p>
       </div>
       <div v-if="mode === 'weekly'">
         <p class="mb-2 text-2xl font-semibold">
-          {{ formatTime(date.from, 'slash') }} -
-          {{ formatTime(date.to, 'slash') }}
+          {{ formatTime(dates.from, 'slash') }} -
+          {{ formatTime(dates.to, 'slash') }}
         </p>
         <p class="text-gray-400">
-          {{ formatTime(date.from) }} - {{ formatTime(date.to) }}
+          {{ formatTime(dates.from) }} - {{ formatTime(dates.to) }}
         </p>
       </div>
     </div>
@@ -82,7 +82,20 @@ export default {
       const mode = this.$route.query.mode;
       return mode;
     },
-    date() {
+    registrationDate() {
+      return this.$auth.user.time_stamps.created_at;
+    },
+    registrationWeek() {
+      const registrationWeek = this.$auth.user.time_stamps.created_at;
+      return moment(registrationWeek).format('YYYY-MM-DD');
+    },
+    today() {
+      return moment().format('YYYY-MM-DD');
+    },
+    thisWeek() {
+      return moment().add(6, 'days').format('YYYY-MM-DD');
+    },
+    dates() {
       const date = this.$route.query?.date;
       const from = this.$route.query?.from;
       const to = this.$route.query?.to;
@@ -92,7 +105,7 @@ export default {
   methods: {
     formatTime(tm, fm) {
       let time = moment(tm).format('dddd');
-      if (fm === 'long') {
+      if (fm === 'text') {
         time = moment(tm).format('MMM Do YY');
       }
 
@@ -103,32 +116,44 @@ export default {
       return time;
     },
     nextDay() {
-      let date = this.date.date;
-      date = moment(date).add(1, 'days').format('YYYY-MM-DD');
+      const currentDate = this.dates.date;
+      const nextDate = moment(currentDate).add(1, 'days').format('YYYY-MM-DD');
 
-      return this.$router.push(`?mode=daily&date=${date}`);
+      if (nextDate > this.today) return;
+
+      return this.$router.push(`?mode=daily&date=${nextDate}`);
     },
     nextWeek() {
-      let from = this.date.from;
-      let to = this.date.to;
-      from = moment(from).add(6, 'days').format('YYYY-MM-DD');
-      to = moment(to).add(6, 'days').format('YYYY-MM-DD');
+      const currentFrom = this.dates.from;
+      const currentTo = this.dates.to;
+      const nextFrom = moment(currentFrom).add(6, 'days').format('YYYY-MM-DD');
+      const nextTo = moment(currentTo).add(6, 'days').format('YYYY-MM-DD');
 
-      return this.$router.push(`?mode=weekly&from=${from}&to=${to}`);
+      if (nextTo > this.thisWeek) return;
+
+      return this.$router.push(`?mode=weekly&from=${nextFrom}&to=${nextTo}`);
     },
     prevDay() {
-      let date = this.date.date;
-      date = moment(date).subtract(1, 'days').format('YYYY-MM-DD');
+      const currentDate = this.dates.date;
+      const prevDate = moment(currentDate)
+        .subtract(1, 'days')
+        .format('YYYY-MM-DD');
 
-      return this.$router.push(`?mode=daily&date=${date}`);
+      if (prevDate < this.registrationDate) return;
+
+      return this.$router.push(`?mode=daily&date=${prevDate}`);
     },
     prevWeek() {
-      let from = this.date.from;
-      let to = this.date.to;
-      from = moment(from).subtract(6, 'days').format('YYYY-MM-DD');
-      to = moment(to).subtract(6, 'days').format('YYYY-MM-DD');
+      const currentFrom = this.dates.from;
+      const currentTo = this.dates.to;
+      const prevFrom = moment(currentFrom)
+        .subtract(6, 'days')
+        .format('YYYY-MM-DD');
+      const prevTo = moment(currentTo).subtract(6, 'days').format('YYYY-MM-DD');
 
-      return this.$router.push(`?mode=weekly&from=${from}&to=${to}`);
+      if (prevFrom < this.registrationWeek) return;
+
+      return this.$router.push(`?mode=weekly&from=${prevFrom}&to=${prevTo}`);
     }
   }
 };
