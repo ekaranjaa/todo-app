@@ -1,6 +1,6 @@
 <template>
   <footer
-    class="px-8 flex items-center border-t border-gray-700"
+    class="px-8 sticky top-full md:relative flex items-center border-t border-gray-700"
     :class="{
       'py-2 justify-between': $auth.loggedIn,
       'py-4 justify-center': !$auth.loggedIn

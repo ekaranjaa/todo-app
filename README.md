@@ -1,5 +1,8 @@
 # Todo App
 
+[![ci](https://github.com/ekaranjaa/todo-app/actions/workflows/ci.yml/badge.svg)](https://github.com/ekaranjaa/todo-app/actions/workflows/ci.yml)
+[![Netlify Status](https://api.netlify.com/api/v1/badges/cbf39eff-0725-498e-8f93-fbb374c1c740/deploy-status)](https://app.netlify.com/sites/syntaxd/deploys)
+
 ## Build Setup
 
 ```bash

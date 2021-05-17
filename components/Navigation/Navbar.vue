@@ -59,10 +59,15 @@ export default {
       return { from, to };
     }
   },
+  created() {
+    this.setDate(this.date.from);
+  },
   methods: {
+    setDate(date) {
+      this.$router.push(`?mode=daily&date=${date}`);
+    },
     genAvatar(name) {
       const avatar = name.charAt(0);
-
       return avatar.toUpperCase();
     }
   }

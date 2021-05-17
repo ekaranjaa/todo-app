@@ -1,5 +1,5 @@
 <template>
-  <div class="todo-container h-72 overflow-y-auto">
+  <div class="todo-container md:h-72 md:overflow-y-auto">
     <div v-if="busy">
       <spinner class="mx-auto" />
     </div>
