@@ -77,7 +77,7 @@
           <button
             v-else
             class="py-2 px-4 w-full flex items-center hover:bg-gray-600 focus:bg-gray-600 focus:outline-none transition"
-            @click="openModal({ todo: todo, action: 'add' })"
+            @click="openModal({ todo: todo, action: 'edit' })"
           >
             <div class="mr-2 h-4 w-4">
               <edit-icon />

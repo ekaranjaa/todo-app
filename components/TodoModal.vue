@@ -10,7 +10,10 @@
       }"
       @submit.prevent="submitForm"
     >
-      <label for="memo" class="mb-2 block">Add a memo</label>
+      <label for="memo" class="mb-2 block">
+        <span v-if="modal.action === 'add'">Add a memo</span>
+        <span v-if="modal.action === 'edit'">Edit memo</span>
+      </label>
       <div class="mb-4">
         <textarea
           id="memo"
@@ -26,7 +29,10 @@
           :disabled="busy"
         >
           <spinner v-if="busy" class="mx-auto" />
-          <span v-else> Add Memo </span>
+          <p v-else>
+            <span v-if="modal.action === 'add'">Add Memo</span>
+            <span v-if="modal.action === 'edit'">Update Memo</span>
+          </p>
         </button>
         <button
           type="button"
