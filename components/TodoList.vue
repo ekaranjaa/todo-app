@@ -58,48 +58,22 @@ export default {
   },
   watch: {
     mode() {
-      this.getTodos(this.mode);
+      this.getTodos(true);
     },
     date() {
-      this.getTodos(this.mode);
+      this.getTodos(true);
     },
     todos() {
       this.filterTodos();
     }
   },
   created() {
-    this.getTodos(this.mode);
+    this.getTodos(true);
   },
   methods: {
     ...mapActions({
-      getDailyTodos: 'todos/getDaily',
-      getWeeklyTodos: 'todos/getWeekly'
+      getTodos: 'todos/get'
     }),
-    getTodos(mode) {
-      switch (mode) {
-        case 'daily':
-          this.getDailyTodos({
-            date: this.date.date,
-            refresh: true
-          });
-          break;
-
-        case 'weekly':
-          this.getWeeklyTodos({
-            from: this.date.from,
-            to: this.date.to,
-            refresh: true
-          });
-          break;
-
-        default:
-          this.getDailyTodos({
-            date: this.date.date,
-            refresh: true
-          });
-          break;
-      }
-    },
     filterTodos() {
       this.pinnedTodos = this.todos.filter(todo => todo.pinned);
       this.unpinnedTodos = this.todos.filter(todo => !todo.pinned);

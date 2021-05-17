@@ -21,18 +21,23 @@ export const mutations = {
 };
 
 export const actions = {
-  async get({ getters, commit }, refresh) {
-    commit('IS_BUSY', true);
+  get({ dispatch }, refresh) {
+    const currentRoute = this.$router.currentRoute.query;
 
-    let todos = getters.todos;
-
-    if (!todos || todos.length > 0 || refresh) {
-      todos = await this.$axios.get('/todos');
-      todos = todos.data.data;
+    if (currentRoute.mode === 'daily') {
+      dispatch('getDaily', {
+        date: currentRoute.date,
+        refresh
+      });
     }
 
-    commit('SET_TODOS', todos);
-    commit('IS_BUSY', false);
+    if (currentRoute.mode === 'weekly') {
+      dispatch('getWeekly', {
+        from: currentRoute.from,
+        to: currentRoute.to,
+        refresh
+      });
+    }
   },
 
   async getDaily({ getters, commit }, { date, refresh }) {
