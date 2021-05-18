@@ -57,7 +57,7 @@ export default {
   data() {
     return {
       data: {
-        email: null
+        email: this.$auth.user?.email || null
       },
       errors: {
         email: null

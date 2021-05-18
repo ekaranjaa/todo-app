@@ -2,7 +2,7 @@
 
 export const state = () => ({
   todos: null,
-  busy: null
+  busy: false
 });
 
 export const getters = {
