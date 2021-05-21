@@ -63,8 +63,11 @@ export default {
     this.setDate(this.dates.from);
   },
   methods: {
-    setDate(date) {
-      this.$router.push(`?mode=daily&date=${date}`);
+    setDate(d) {
+      const { date, from } = this.$route.query;
+
+      if (date || from) return;
+      this.$router.push(`?mode=daily&date=${d}`);
     },
     genAvatar(name) {
       const avatar = name.charAt(0);
